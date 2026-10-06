@@ -181,8 +181,8 @@ type SetupState = "loading" | "list" | "empty" | "offline" | "denied";
 function SetupScreen({ go }: { go: (s: Screen) => void }) {
   const [hub, setHub] = useState<"idle" | "searching" | "connected">("idle");
   const [st, setSt] = useState<SetupState>("loading");
-  useEffect(() => { if (hub === "searching") { const t = setTimeout(() => setHub("connected"), 1400); return () => clearTimeout(t); } }, [hub]);
-  useEffect(() => { if (hub === "connected" && st === "loading") { const t = setTimeout(() => setSt("list"), 1200); return () => clearTimeout(t); } }, [hub, st]);
+  useEffect(() => { if (hub !== "searching") return; const t = setTimeout(() => setHub("connected"), 1400); return () => clearTimeout(t); }, [hub]);
+  useEffect(() => { if (hub !== "connected" || st !== "loading") return; const t = setTimeout(() => setSt("list"), 1200); return () => clearTimeout(t); }, [hub, st]);
 
   return (
     <>

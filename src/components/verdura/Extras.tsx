@@ -170,7 +170,7 @@ export function ThresholdsScreen({ go }: Go) {
   );
 }
 function RangeCard({ m, level }: { m: (typeof metrics)[number]; level: "warn" | "crit" }) {
-  const [r, setR] = useState<Record<string, number[]>>({ warn: m.warn, crit: m.crit });
+  const [r, setR] = useState<Record<"warn" | "crit", [number, number]>>({ warn: m.warn as [number, number], crit: m.crit as [number, number] });
   const [a, b] = r[level];
   const pct = (v: number) => ((v - m.lo) / (m.hi - m.lo)) * 100;
   const set = (i: number, v: number) => setR((x) => ({ ...x, [level]: i ? [a, Math.max(v, a)] : [Math.min(v, b), b] }));
@@ -297,7 +297,7 @@ const axes: Record<string, string[]> = { "24 Hours": ["00:00", "06:00", "12:00",
 export function TrendsCard() {
   const [period, setPeriod] = useState("24 Hours");
   const [metric, setMetric] = useState("Temperature");
-  const d = data[metric], vals = d.range[period];
+  const d = data[metric]!, vals = d.range[period]!;
   const max = Math.max(...vals), min = Math.min(...vals);
   const pts = vals.map((v, i) => `${(i / (vals.length - 1)) * 300},${90 - ((v - min) / (max - min || 1)) * 75}`).join(" ");
   return (
@@ -317,7 +317,7 @@ export function TrendsCard() {
         <polygon points={`0,95 ${pts} 300,95`} className="fill-sage/25" />
         <polyline points={pts} fill="none" className="stroke-primary" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
       </svg>
-      <div className="mt-1 flex justify-between text-xs text-muted-foreground">{axes[period].map((a) => <span key={a}>{a}</span>)}</div>
+      <div className="mt-1 flex justify-between text-xs text-muted-foreground">{axes[period]!.map((a) => <span key={a}>{a}</span>)}</div>
     </Card>
   );
 }
